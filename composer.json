@@ -1,0 +1,35 @@
+{
+    "name": "phtamas/yii2-image-processor",
+    "description": "Configurable image processing for Yii2",
+    "keywords": [
+        "yii2",
+        "image manipulation",
+        "image processing",
+        "image transformation"
+    ],
+    "license": "MIT",
+    "require": {
+        "yiisoft/yii2": "~2.0",
+        "imagine/imagine": "0.6.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.*"
+    },
+    "authors": [
+        {
+            "name": "Papp-Horváth Tamás",
+            "email": "phtamas@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "phtamas\\yii2\\imageprocessor\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "phtamas\\yii2\\imageprocessor\\test\\": "test/"
+        }
+    }
+}
