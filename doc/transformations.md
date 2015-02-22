@@ -20,9 +20,9 @@ The height in pixels to resize to as integer. If null/omitted, image will be res
 #### $scaleTo
 How to interpret the given width and height. Applies only when both width and height are set.
 
-* (string) fit: Image will be resized proportionally to the largest size that fits the given width and height.
-* (string) cover: Image will be resized proportionally to the smallest size that covers the given width and height
-* null/omitted: Image will be stretched to the given with and height.
+* `(string) fit`: Image will be resized proportionally to the largest size that fits the given width and height.
+* `(string) cover`: Image will be resized proportionally to the smallest size that covers the given width and height
+* `null/omitted`: Image will be stretched to the given with and height.
  
 ```php
 // Fit
@@ -37,9 +37,9 @@ How to interpret the given width and height. Applies only when both width and he
 #### $only
 When to resize image depending on its original size.
 
-* (string) up: Image will only be resized when it's smaller than the given width and/or height.
-* (string) down: Image will only be resized when it's larger than the given width and/or height.
-* null/omitted: Image will always be resized regardless of its original size.
+* `(string) up`: Image will only be resized when it's smaller than the given width and/or height.
+* `(string) down`: Image will only be resized when it's larger than the given width and/or height.
+* `null/omitted`: Image will always be resized regardless of its original size.
 
 ```php
 // Only if larger
@@ -57,16 +57,17 @@ Crops the image to the specified width and height
 ##### $x
 Horizontal coordinate of the top-left corner of the area to crop, in pixels as integer or string.
 
-* (string) right - 100: -100 px from the right edge of image
-* (string) center + 100 or (string) center - 100: +/- 100px from the center of image
-* (string) left + 100: Same as (integer) 100.
+* `(string) right - 100`: -100 px from the right edge of image
+* `(string) center + 100` or `(string) center - 100`: +/- 100px from the center of image
+* `(string) left + 100`: Same as (integer) 100.
 
 ##### $y
 Vertical coordinate of the top-left corner of the area to crop, in pixels as integer or string.
 
-* (string) bottom - 100: -100 px from the bottom edge of image
-* (string) center + 100 or (string) center - 100: +/- 100px from the center of image
-* (string) top + 100: Same as (integer) 100.
+* `(string) bottom - 100`: -100 px from the bottom edge of image
+* `(string) center + 100` or (string) center - 100: +/- 100px from the center of image
+* `(string) top + 100`: Same as (integer) 100.
+
 ##### $width
 Width of the area to crop, in pixels as integer.
 ##### $height
@@ -92,12 +93,12 @@ Path to the watermark image file. Can be specified as an alias.
 ##### $align
 How to align watermark on the image as string. Defaults to bottom-left.
 
-* (string) top-center
-* (string) top-right
-* (string) bottom-left
-* (string) bottom-center
-* (string) bottom-right
-* (string) center
+* `(string) top-center`
+* `(string) top-right`
+* `(string) bottom-left`
+* `(string) bottom-center`
+* `(string) bottom-right`
+* `(string) center`
 
 ```php
 // Apply watermark to the bottom-right corner
