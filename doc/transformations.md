@@ -31,7 +31,7 @@ How to interpret the given width and height. Applies only when both width and he
 // Cover
 ['resize', 'width' => 300, 'height' => 200, 'scaleTo' => 'cover']
 
-// Strech
+// Stretch
 ['resize', 'width' => 300, 'height' => 200]
 ```
 #### $only
