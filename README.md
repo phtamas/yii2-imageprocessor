@@ -58,7 +58,7 @@ Yii::$app->imageProcessor->send(['data' => 'binary string'], 'jpg', 'galleryImag
 
 // Ad-hoc processing is possible, too
 Yii::$app->imageProcessor->saveAndSend(['file' => '@images/image.jpg'], $path, 'jpg', [
-    ['resize', 'width' => 300], // Resize proportionally to 300 px width
+    'process' => ['resize', 'width' => 300], // Resize proportionally to 300 px width
 ]);
 
 ```
