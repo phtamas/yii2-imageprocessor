@@ -6,7 +6,9 @@ Ad-hoc processing is also supported but if heavy and complex image manipulation 
 ## Getting started
 Install via Composer:
 ```json
-TBD
+    "require": {
+        "phtamas/yii2-imageprocessor": "@beta"
+    }
 ```
 Configure it in the 'components' section of your application configuration:
 ```php
