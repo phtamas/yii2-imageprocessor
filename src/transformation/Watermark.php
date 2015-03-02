@@ -107,7 +107,25 @@ class Watermark extends Object implements TransformationInterface
         $this->imageWidth = $image->getSize()->getWidth();
         $this->imageHeight = $image->getSize()->getHeight();
 
+        $watermarkImageMaxWidth = $this->imageWidth - (2 * $this->margin);
+        if ($watermarkImageMaxWidth < 1) {
+            return;
+        }
+        $watermarkImageMaxHeight = $this->imageHeight - (2 * $this->margin);
+        if ($watermarkImageMaxHeight < 1) {
+            return;
+        }
+
         $watermarkImage = $imagine->open(\Yii::getAlias($this->path));
+
+        if (!(new Box($watermarkImageMaxWidth, $watermarkImageMaxHeight))->contains($watermarkImage->getSize())) {
+            $resize = new Resize();
+            $resize->width = $watermarkImageMaxWidth;
+            $resize->height = $watermarkImageMaxHeight;
+            $resize->scaleTo = 'fit';
+            $resize->transform($watermarkImage, $imagine);
+        }
+
         $this->watermarkImageWidth = $watermarkImage->getSize()->getWidth();
         $this->watermarkImageHeight = $watermarkImage->getSize()->getHeight();
 
@@ -139,21 +157,7 @@ class Watermark extends Object implements TransformationInterface
                     is_scalar($this->align) ? $this->align : gettype($this->align)
                 ));
         }
-        $watermarkImageMaxWidth = $this->imageWidth - (2 * $this->margin);
-        if ($watermarkImageMaxWidth < 1) {
-            return;
-        }
-        $watermarkImageMaxHeight = $this->imageHeight - (2 * $this->margin);
-        if ($watermarkImageMaxHeight < 1) {
-            return;
-        }
-        if (!(new Box($watermarkImageMaxWidth, $watermarkImageMaxHeight))->contains($watermarkImage->getSize())) {
-            $resize = new Resize();
-            $resize->width = $watermarkImageMaxWidth;
-            $resize->height = $watermarkImageMaxHeight;
-            $resize->scaleTo = 'fit';
-            $resize->transform($watermarkImage, $imagine);
-        }
+
         $image->paste($watermarkImage, $start);
     }
 }

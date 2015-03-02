@@ -222,6 +222,7 @@ class WatermarkTest extends PHPUnit_Framework_TestCase
             'top-left'
         );
 
+        $watermarkImageSpy->testSpyReset();
         $watermark->align = 'bottom-right';
         $watermark->transform($imageStub, $imagineStub);
         $this->assertEquals(
@@ -237,6 +238,7 @@ class WatermarkTest extends PHPUnit_Framework_TestCase
             'bottom-right'
         );
 
+        $watermarkImageSpy->testSpyReset();
         $watermark->align = 'center';
         $watermark->transform($imageStub, $imagineStub);
         $this->assertEquals(
@@ -250,6 +252,67 @@ class WatermarkTest extends PHPUnit_Framework_TestCase
             ],
             $watermarkImageSpy->testSpyGetMethodCallAtPosition(1),
             'center'
+        );
+    }
+
+    /**
+     * Issue #4
+     */
+    public function testResizedWatermarkIsAlignedProperly()
+    {
+        $imagineStub = new AbstractImagineStub();
+        $watermarkImageStub = new ImageInterfaceStub();
+        $watermarkImageStub->setSize(new Box(200, 100));
+        $imagineStub->setImage($watermarkImageStub);
+        $imageSpy = new ImageInterfaceSpy(new Box(100, 80));
+        $watermark = new Watermark(['path' => '/path/to/watermark/image']);
+        $watermark->margin = 10;
+
+        $watermark->align = 'top-left';
+        $watermark->transform($imageSpy, $imagineStub);
+        $this->assertEquals(
+            [
+                'methodName' => 'paste',
+                'arguments' => [
+                    'image' => $watermarkImageStub,
+                    'startX' => 10,
+                    'startY' => 10,
+                ],
+            ],
+            $imageSpy->testSpyGetMethodCallAtPosition(1),
+            'top-left'
+        );
+
+        $imageSpy->testSpyReset();
+        $watermark->align = 'bottom-right';
+        $watermark->transform($imageSpy, $imagineStub);
+        $this->assertEquals(
+            [
+                'methodName' => 'paste',
+                'arguments' => [
+                    'image' => $watermarkImageStub,
+                    'startX' => 10,
+                    'startY' => 29,
+                ],
+            ],
+            $imageSpy->testSpyGetMethodCallAtPosition(1),
+            'bottom-right aligned properly'
+        );
+
+        $imageSpy->testSpyReset();
+        $watermark->align = 'center';
+        $watermark->transform($imageSpy, $imagineStub);
+        $this->assertEquals(
+            [
+                'methodName' => 'paste',
+                'arguments' => [
+                    'image' => $watermarkImageStub,
+                    'startX' => 10,
+                    'startY' => 19,
+                ],
+            ],
+            $imageSpy->testSpyGetMethodCallAtPosition(1),
+            'center aligned properly'
         );
     }
 }
