@@ -60,11 +60,11 @@ class Crop extends Object implements TransformationInterface
         $width = $this->width;
         $height = $this->height;
 
-        if ($x + $width > $image->getSize()->getWidth() - 1) {
-            $width -= ($x + $width) - ($image->getSize()->getWidth() - 1);
+        if ($x + $width > $image->getSize()->getWidth()) {
+            $width -= ($x + $width) - ($image->getSize()->getWidth());
         }
-        if ($y + $height > $image->getSize()->getHeight() - 1) {
-            $height -= ($y + $height) - ($image->getSize()->getHeight() - 1);
+        if ($y + $height > $image->getSize()->getHeight()) {
+            $height -= ($y + $height) - ($image->getSize()->getHeight());
         }
         $image->crop(new Point($x, $y), new Box($width, $height));
     }
