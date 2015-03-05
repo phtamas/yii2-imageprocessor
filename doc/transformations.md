@@ -51,6 +51,26 @@ When to resize image depending on its original size.
 // Always
 ['resize', 'width' => 300]
 ```
+#### $filter
+Name of interpolation filter to use.
+
+* `(string) point`
+* `(string) box`
+* `(string) triangle`
+* `(string) hermite`
+* `(string) hanning`
+* `(string) hamming`
+* `(string) blackman`
+* `(string) gaussian`
+* `(string) quadratic`
+* `(string) cubic`
+* `(string) catrom`
+* `(string) mitchell`
+* `(string) lanczos`
+* `(string) bessel`
+* `(string) sinc`
+* `null/omitted`: No filter will be applied.
+
 ### Crop
 Crops the image to the specified width and height
 #### Properties

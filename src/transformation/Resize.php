@@ -48,6 +48,26 @@ class Resize extends Object implements TransformationInterface
      */
     public $only;
 
+    /**
+     * @var string|null Name of interpolation filter to use.
+     * Valid values:
+     * - (string) point
+     * - (string) box
+     * - (string) triangle
+     * - (string) hermite
+     * - (string) hanning
+     * - (string) hamming
+     * - (string) blackman
+     * - (string) gaussian
+     * - (string) quadratic
+     * - (string) cubic
+     * - (string) catrom
+     * - (string) mitchell
+     * - (string) lanczos
+     * - (string) bessel
+     * - (string) sinc
+     * - null/omitted: No filter will be applied.
+     */
     public $filter;
 
     private $filters = [
