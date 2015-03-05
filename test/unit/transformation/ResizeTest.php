@@ -1,7 +1,9 @@
 <?php
 namespace phtamas\yii2\imageprocessor\test\unit\transformation;
 
+use Imagine\Image\ImageInterface;
 use PHPUnit_Framework_TestCase;
+use phtamas\yii2\imageprocessor\test\double\ImageInterfaceSpy;
 use phtamas\yii2\imageprocessor\test\double\ImagineInterfaceDummy;
 use phtamas\yii2\imageprocessor\test\double\ImageInterfaceStub;
 use Imagine\Image\Box;
@@ -201,5 +203,159 @@ class ResizeTest extends PHPUnit_Framework_TestCase
         $resize->transform($imageStub, new ImagineInterfaceDummy());
         $this->assertEquals(100, $imageStub->getSize()->getHeight(), 'height sized down to cover');
         $this->assertEquals(225, $imageStub->getSize()->getWidth(), 'width sized down proportinally');
+    }
+
+    public function testResizeWithFilter()
+    {
+        $resize = new Resize();
+        $resize->width = 150;
+        $resize->height = 100;
+
+        $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $imagineDummy = new ImagineInterfaceDummy();
+
+        $resize->filter = 'point';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_POINT],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'point'
+        );
+
+        $imageSpy->testSpyReset();
+        $resize->filter = 'box';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_BOX],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'box'
+        );
+
+        $imageSpy->testSpyReset();
+        $resize->filter = 'triangle';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_TRIANGLE],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'triangle'
+        );
+
+        $imageSpy->testSpyReset();
+        $resize->filter = 'hermite';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_HERMITE],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'hermite'
+        );
+
+        $imageSpy->testSpyReset();
+        $resize->filter = 'hanning';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_HANNING],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'hanning'
+        );
+
+        $imageSpy->testSpyReset();
+        $resize->filter = 'hamming';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_HAMMING],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'hamming'
+        );
+
+        $imageSpy->testSpyReset();
+        $resize->filter = 'blackman';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_BLACKMAN],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'blackman'
+        );
+
+        $imageSpy->testSpyReset();
+        $resize->filter = 'gaussian';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_GAUSSIAN],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'gaussian'
+        );
+
+        $imageSpy->testSpyReset();
+        $resize->filter = 'quadratic';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_QUADRATIC],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'quadratic'
+        );
+
+        $imageSpy->testSpyReset();
+        $resize->filter = 'cubic';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_CUBIC],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'cubic'
+        );
+
+        $imageSpy->testSpyReset();
+        $resize->filter = 'catrom';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_CATROM],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'catrom'
+        );
+
+        $imageSpy->testSpyReset();
+        $resize->filter = 'mitchell';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_MITCHELL],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'mitchell'
+        );
+
+        $imageSpy->testSpyReset();
+        $resize->filter = 'lanczos';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_LANCZOS],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'lanczos'
+        );
+
+        $imageSpy->testSpyReset();
+        $resize->filter = 'bessel';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_BESSEL],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'bessel'
+        );
+
+        $imageSpy->testSpyReset();
+        $resize->filter = 'sinc';
+        $resize->transform($imageSpy, $imagineDummy);
+        $this->assertEquals(
+            ['sizeWidth' => 150, 'sizeHeight' => 100, 'filter' => ImageInterface::FILTER_SINC],
+            $imageSpy->testSpyGetMethodCallArguments('resize')[0],
+            'sinc'
+        );
+    }
+
+    public function testResizeWithInvalidFilter()
+    {
+        $resize = new Resize();
+        $resize->width = 150;
+        $resize->height = 100;
+        $resize->filter = 'invalid filter';
+        $this->setExpectedException('\yii\base\InvalidConfigException');
+        $resize->transform(new ImageInterfaceStub(), new ImagineInterfaceDummy());
     }
 } 

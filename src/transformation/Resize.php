@@ -8,6 +8,7 @@ use Imagine\Image\ImagineInterface;
 use Imagine\Image\ImageInterface;
 use Imagine\Image\BoxInterface;
 use Imagine\Image\Box;
+use Imagine\Gd\Image as GdImage;
 use phtamas\yii2\imageprocessor\TransformationInterface;
 
 /**
@@ -46,6 +47,26 @@ class Resize extends Object implements TransformationInterface
      * - null/omitted: Image will always be resized regardless of its original size.
      */
     public $only;
+
+    public $filter;
+
+    private $filters = [
+        'point' => ImageInterface::FILTER_POINT,
+        'box' => ImageInterface::FILTER_BOX,
+        'triangle' => ImageInterface::FILTER_TRIANGLE,
+        'hermite' => ImageInterface::FILTER_HERMITE,
+        'hanning' => ImageInterface::FILTER_HANNING,
+        'hamming' => ImageInterface::FILTER_HAMMING,
+        'blackman' => ImageInterface::FILTER_BLACKMAN,
+        'gaussian' => ImageInterface::FILTER_GAUSSIAN,
+        'quadratic' => ImageInterface::FILTER_QUADRATIC,
+        'cubic' => ImageInterface::FILTER_CUBIC,
+        'catrom' => ImageInterface::FILTER_CATROM,
+        'mitchell' => ImageInterface::FILTER_MITCHELL,
+        'lanczos' => ImageInterface::FILTER_LANCZOS,
+        'bessel' => ImageInterface::FILTER_BESSEL,
+        'sinc' => ImageInterface::FILTER_SINC,
+    ];
 
     /**
      * @throws \yii\base\InvalidConfigException
@@ -88,7 +109,19 @@ class Resize extends Object implements TransformationInterface
         if ($this->only === 'down' && $size->contains($image->getSize())) {
             return;
         }
-        $image->resize($size);
+        if (is_null($this->filter) || $image instanceof GdImage) {
+            $image->resize($size);
+        } elseif (!array_key_exists($this->filter, $this->filters)) {
+            throw new InvalidConfigException(sprintf(
+                'Invalid filter type: %s. Valid types: %s.',
+                is_scalar($this->filter) ? $this->filter : gettype($this->filter),
+                implode(', ', array_keys($this->filters))
+            ));
+        }
+        else {
+            $image->resize($size, $this->filters[$this->filter]);
+        }
+
     }
 
     /**
