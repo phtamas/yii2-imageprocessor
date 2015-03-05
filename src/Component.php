@@ -212,7 +212,7 @@ class Component extends BaseComponent
     {
         $name = array_shift($definition);
         if (isset($this->transformations[$name])) {
-            return Yii::createObject($this->transformations[$name], [$definition]);
+            return Yii::createObject(array_merge(['class' => $this->transformations[$name]], $definition));
         }
         return Yii::createObject($this->builtInTransformations[$name], [$definition]);
     }
