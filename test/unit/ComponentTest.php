@@ -450,7 +450,7 @@ class ComponentTest extends PHPUnit_Framework_TestCase
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
         $component = new Component([
             'transformations' => [
-                'custom' => '\phtamas\yii2\imageprocessor\transformation\Resize',
+                'custom' => '\phtamas\yii2\imageprocessor\test\double\TransformationStub',
             ]
         ]);
         $component->process($imageSpy, [['custom', 'width' => 100, 'height' => 100]]);
