@@ -41,12 +41,39 @@ An array of [image category definitions](#image-category-definition).
 ],
 ```
 ### $transformations
-[Custom transformations](transformations.md#custom-transformations) can be added here. Array of transformation name => class name pairs.
+[Custom transformations](transformations.md#custom-transformations) can be added here. Array of transformation name => class name or transformation name => configuration pairs.
+
 ```php
 'transformations' => [
     'mytransformation' => '\application\imageprocessing\transformations\MyTransformation',
 ],
+
+// With some defaults
+'transformations' => [
+    'mytransformation' => [
+        'class' => '\application\imageprocessing\transformations\MyTransformation',
+        'property1' => 'value1',
+        'property2' => 'value2',
+    ],
+],
 ```
+
+Can be also used to set defaults for built-in transformations.
+
+```php
+'transformations' => [
+    'resize' => ['filter' => 'lanczos'],
+],
+```
+
+Or even replace built-in transformation classes with custom ones.
+
+```php
+'transformations' => [
+    'resize' => '\my\own\ResizeClass',
+],
+```
+
 ## Main API methods
 In a typical web application developers usually want to either process and save an uploaded image or process a stored image and send it to an HTTP client. Main API methods are here to cover these use cases.
 ### save()

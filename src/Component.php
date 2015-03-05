@@ -40,7 +40,7 @@ class Component extends BaseComponent
 
     /**
      * @var array Custom transformations.
-     * Key: (string) transformation name, value: (string) classname.
+     * Key: (string) transformation name, value: (string) classname or (array) class configuration.
      */
     public $transformations = [];
 
@@ -211,10 +211,24 @@ class Component extends BaseComponent
     private function createTransformation(array $definition)
     {
         $name = array_shift($definition);
-        if (isset($this->transformations[$name])) {
-            return Yii::createObject(array_merge(['class' => $this->transformations[$name]], $definition));
+        if (isset($this->builtInTransformations[$name])) {
+            $configuration = ['class' => $this->builtInTransformations[$name]];
+            if (isset($this->transformations[$name])) {
+                $configuration = array_merge(
+                    $configuration,
+                    is_string($this->transformations[$name])
+                        ? ['class' => $this->transformations[$name]]
+                        : $this->transformations[$name]
+                );
+            }
+            $configuration = array_merge($configuration, $definition);
+        } else  {
+            $configuration = is_string($this->transformations[$name])
+                ? ['class' => $this->transformations[$name]]
+                : $this->transformations[$name];
+            $configuration = array_merge($configuration, $definition);
         }
-        return Yii::createObject($this->builtInTransformations[$name], [$definition]);
+        return Yii::createObject($configuration);
     }
 
     /**

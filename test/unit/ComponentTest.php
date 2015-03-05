@@ -467,4 +467,77 @@ class ComponentTest extends PHPUnit_Framework_TestCase
             $imageSpy->testSpyGetMethodCallAtPosition(1)
         );
     }
+
+    public function testBuiltInTransformationWithConfiguredDefaults()
+    {
+        $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $component = new Component([
+            'transformations' => [
+                'resize' => ['width' => 100, 'height' => 100],
+            ]
+        ]);
+        $component->process($imageSpy, [['resize', 'height' => 50]]);
+        $this->assertEquals(
+            [
+                'methodName' => 'resize',
+                'arguments' => [
+                    'sizeWidth' => 100,
+                    'sizeHeight' => 50,
+                    'filter' => ImageInterface::FILTER_UNDEFINED,
+                ],
+
+            ],
+            $imageSpy->testSpyGetMethodCallAtPosition(1)
+        );
+    }
+
+    public function testCustomTransformationWithConfiguredDefaults()
+    {
+        $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $component = new Component([
+            'transformations' => [
+                'custom' => [
+                    'class' => '\phtamas\yii2\imageprocessor\test\double\TransformationStub',
+                    'width' => 100,
+                    'height' => 100
+                ],
+            ]
+        ]);
+        $component->process($imageSpy, [['custom', 'height' => 50]]);
+        $this->assertEquals(
+            [
+                'methodName' => 'resize',
+                'arguments' => [
+                    'sizeWidth' => 100,
+                    'sizeHeight' => 50,
+                    'filter' => ImageInterface::FILTER_UNDEFINED,
+                ],
+
+            ],
+            $imageSpy->testSpyGetMethodCallAtPosition(1)
+        );
+    }
+
+    public function testCustomTransformationOverridesBuiltInTransformationClass()
+    {
+        $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $component = new Component([
+            'transformations' => [
+                'crop' => '\phtamas\yii2\imageprocessor\test\double\TransformationStub',
+            ]
+        ]);
+        $component->process($imageSpy, [['crop', 'width' => 100, 'height' => 50]]);
+        $this->assertEquals(
+            [
+                'methodName' => 'resize',
+                'arguments' => [
+                    'sizeWidth' => 100,
+                    'sizeHeight' => 50,
+                    'filter' => ImageInterface::FILTER_UNDEFINED,
+                ],
+
+            ],
+            $imageSpy->testSpyGetMethodCallAtPosition(1)
+        );
+    }
 } 
