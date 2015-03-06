@@ -54,11 +54,20 @@ class Crop extends Object implements TransformationInterface
     {
         $this->imageWidth = $image->getSize()->getWidth();
         $this->imageHeight = $image->getSize()->getHeight();
-        $x = $this->parseX($this->x);
-        $y = $this->parseY($this->y);
 
         $width = $this->width;
         $height = $this->height;
+
+        if (isset($this->x)) {
+            $x = $this->parseX($this->x);
+        } else {
+            $x = $this->imageWidth > $this->width ? intval(round(($this->imageWidth - $this->width) / 2)) - 1 : 0;
+        }
+        if (isset($this->y)) {
+            $y = $this->parseY($this->y);
+        } else {
+            $y = $this->imageHeight > $this->height ? intval(round(($this->imageHeight - $this->height) / 2)) - 1 : 0;
+        }
 
         if ($x + $width > $image->getSize()->getWidth()) {
             $width -= ($x + $width) - ($image->getSize()->getWidth());

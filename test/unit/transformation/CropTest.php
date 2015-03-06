@@ -113,4 +113,23 @@ class CropTest extends PHPUnit_Framework_TestCase
             $imageSpy->testSpyGetMethodCallArguments('crop')[0]
         );
     }
+
+    public function testCropWithXAndYOmitted()
+    {
+        $crop = new Crop();
+        $crop->width = 80;
+        $crop->height = 50;
+        $imageSpy = new ImageInterfaceSpy(new Box(200, 100));
+        $crop->transform($imageSpy, new ImagineInterfaceDummy());
+        $this->assertEquals(1, $imageSpy->testSpyGetMethodCallCount('crop'));
+        $this->assertEquals(
+            [
+                'startX' => 59,
+                'startY' => 24,
+                'sizeWidth' => 80,
+                'sizeHeight' => 50,
+            ],
+            $imageSpy->testSpyGetMethodCallArguments('crop')[0]
+        );
+    }
 } 

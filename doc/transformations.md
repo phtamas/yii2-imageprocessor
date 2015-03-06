@@ -80,6 +80,7 @@ Horizontal coordinate of the top-left corner of the area to crop, in pixels as i
 * `(string) right - 100`: -100 px from the right edge of image
 * `(string) center + 100` or `(string) center - 100`: +/- 100px from the center of image
 * `(string) left + 100`: Same as (integer) 100.
+* `null/omitted`: Crop from the horizontal center of the image
 
 ##### $y
 Vertical coordinate of the top-left corner of the area to crop, in pixels as integer or string.
@@ -87,6 +88,7 @@ Vertical coordinate of the top-left corner of the area to crop, in pixels as int
 * `(string) bottom - 100`: -100 px from the bottom edge of image
 * `(string) center + 100` or (string) center - 100: +/- 100px from the center of image
 * `(string) top + 100`: Same as (integer) 100.
+* `null/omitted`: Crop from the vertical center of the image
 
 ##### $width
 Width of the area to crop, in pixels as integer.
