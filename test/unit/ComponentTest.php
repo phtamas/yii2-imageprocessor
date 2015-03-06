@@ -1,14 +1,18 @@
 <?php
 namespace phtamas\yii2\imageprocessor\test\unit;
 
+use phtamas\yii2\imageprocessor\test\double\AbstractImagineStub;
+use phtamas\yii2\imageprocessor\test\double\ImageInterfaceStub;
 use Yii;
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
+use Imagine\Image\Metadata\MetadataBag;
 use PHPUnit_Framework_TestCase;
 use phtamas\yii2\imageprocessor\Component;
 use phtamas\yii2\imageprocessor\test\double\ImageInterfaceDummy;
 use phtamas\yii2\imageprocessor\test\double\AbstractImagineSpy;
 use phtamas\yii2\imageprocessor\test\double\ImageInterfaceSpy;
+use yii\filters\ContentNegotiator;
 
 class ComponentTest extends PHPUnit_Framework_TestCase
 {
@@ -536,6 +540,91 @@ class ComponentTest extends PHPUnit_Framework_TestCase
                     'filter' => ImageInterface::FILTER_UNDEFINED,
                 ],
 
+            ],
+            $imageSpy->testSpyGetMethodCallAtPosition(1)
+        );
+    }
+
+    public function testAutorotateViaMethodCall()
+    {
+        $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $imageSpy->setMetadata(new MetadataBag(['ifd0.Orientation' => 3]));
+        $component = new Component();
+        $component->autorotate($imageSpy);
+        $this->assertEquals(
+            [
+                'methodName' => 'rotate',
+                'arguments' => [180],
+            ],
+            $imageSpy->testSpyGetMethodCallAtPosition(1)
+        );
+    }
+
+    public function testCropViaMethodCall()
+    {
+        $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $component = new Component();
+        $component->crop($imageSpy, [
+            'x' => 10,
+            'y' => 10,
+            'width' => 100,
+            'height' => 50,
+        ]);
+        $this->assertEquals(
+            [
+                'methodName' => 'crop',
+                'arguments' => [
+                    'startX' => 10,
+                    'startY' => 10,
+                    'sizeWidth' => 100,
+                    'sizeHeight' => 50,
+                ],
+            ],
+            $imageSpy->testSpyGetMethodCallAtPosition(1)
+        );
+    }
+
+    public function testResizeViaMethodCall()
+    {
+        $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $component = new Component();
+        $component->resize($imageSpy, [
+            'width' => 100,
+            'height' => 50,
+        ]);
+        $this->assertEquals(
+            [
+                'methodName' => 'resize',
+                'arguments' => [
+                    'sizeWidth' => 100,
+                    'sizeHeight' => 50,
+                    'filter' => ImageInterface::FILTER_UNDEFINED,
+                ],
+            ],
+            $imageSpy->testSpyGetMethodCallAtPosition(1)
+        );
+    }
+
+    public function testWatermarkViaMethodCall()
+    {
+        $imagineStub = new AbstractImagineStub();
+        $watermarkImageStub = new ImageInterfaceStub();
+        $watermarkImageStub->setSize(new Box(100, 50));
+        $imagineStub->setImage($watermarkImageStub);
+        $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $component = new Component(['imagine' => $imagineStub]);
+        $component->watermark($imageSpy, [
+            'path' => '/path/to/watermark/image',
+            'align' => 'top-left',
+        ]);
+        $this->assertSame(
+            [
+                'methodName' => 'paste',
+                'arguments' => [
+                    'image' => $watermarkImageStub,
+                    'startX' => 0,
+                    'startY' => 0,
+                ],
             ],
             $imageSpy->testSpyGetMethodCallAtPosition(1)
         );

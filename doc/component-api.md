@@ -162,6 +162,25 @@ public function process($source, $as = null)
 A valid [image source](#image-source).
 ##### $as
 Name of an [image category definition](#image-category-definition) as string or a list of transformations as array.
+## Transformations as methods
+All transformations including [custom ones](transformations.md#custom-transformations) are available via "magic" method calls.
+The name of the method is the name of the transformation, the first parameter is an image object, the second parameter is a
+configuration array (can be omitted when the transformation doesn't require configuration).
+
+```php
+$image = \Yii::$app->imageProcessor->create(['file' => '/path/to/file']);
+
+// Without configuration
+\Yii::$app->imageProcessor->autorotate($image);
+
+// With configuration
+\Yii::$app->imageProcessor->resize($image, [
+    'width' => 300,
+    'height' => 200,
+    'scaleTo' => 'fit',
+]);
+```
+
 ## Glossary
 ### Image source
 The first parameter of all API methods. Can be one of the following formats.

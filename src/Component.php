@@ -13,6 +13,12 @@ use Imagine\Image\Box;
 use Imagine\Image\Metadata\ExifMetadataReader;
 use InvalidArgumentException;
 
+/**
+ * @method autorotate(ImageInterface $image)
+ * @method crop(ImageInterface $image, array $configuration)
+ * @method resize(ImageInterface $image, array $configuration)
+ * @method watermark(ImageInterface $image, array $configuration)
+ */
 class Component extends BaseComponent
 {
     /**
@@ -58,6 +64,14 @@ class Component extends BaseComponent
         'resize' => '\phtamas\yii2\imageprocessor\transformation\Resize',
         'watermark' => '\phtamas\yii2\imageprocessor\transformation\Watermark',
     ];
+
+    public function __call($name, $params)
+    {
+        if ($transformation = $this->createTransformation($name, isset($params[1]) ? $params[1] : [])) {
+            return $transformation->transform($params[0], $this->imagine);
+        }
+        return parent::__call($name, $params);
+    }
 
     public function init()
     {
@@ -116,7 +130,7 @@ class Component extends BaseComponent
         }
         if (is_array($as)) {
             foreach ($as as $transformationDefinition) {
-                $transformation = $this->createTransformation($transformationDefinition);
+                $transformation = $this->createTransformation(array_shift($transformationDefinition), $transformationDefinition);
                 $transformation->transform($image, $this->imagine);
             }
         }
@@ -205,12 +219,12 @@ class Component extends BaseComponent
     }
 
     /**
+     * @param string $name
      * @param array $definition
-     * @return TransformationInterface
+     * @return TransformationInterface|bool
      */
-    private function createTransformation(array $definition)
+    private function createTransformation($name, array $definition)
     {
-        $name = array_shift($definition);
         if (isset($this->builtInTransformations[$name])) {
             $configuration = ['class' => $this->builtInTransformations[$name]];
             if (isset($this->transformations[$name])) {
@@ -222,6 +236,8 @@ class Component extends BaseComponent
                 );
             }
             $configuration = array_merge($configuration, $definition);
+        } elseif (!isset($this->transformations[$name])) {
+            return false;
         } else  {
             $configuration = is_string($this->transformations[$name])
                 ? ['class' => $this->transformations[$name]]
