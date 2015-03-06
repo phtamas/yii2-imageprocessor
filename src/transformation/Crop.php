@@ -41,88 +41,55 @@ class Crop extends Object implements TransformationInterface
      */
     public $height;
 
-    /** @var  int */
-    private $imageWidth;
-
-    /** @var  int */
-    private $imageHeight;
-
     /**
      * @throws \yii\base\InvalidConfigException
      */
     public function transform(ImageInterface $image, ImagineInterface $imagine)
     {
-        $this->imageWidth = $image->getSize()->getWidth();
-        $this->imageHeight = $image->getSize()->getHeight();
+        $imageWidth = $image->getSize()->getWidth();
+        $imageHeight = $image->getSize()->getHeight();
 
         $width = $this->width;
         $height = $this->height;
 
         if (isset($this->x)) {
-            $x = $this->parseX($this->x);
+            $x = $this->parseX($this->x, $imageWidth);
+        } elseif ($imageWidth > $width) {
+            $x = intval(round(($imageWidth - $width) / 2)) - 1;
         } else {
-            $x = $this->imageWidth > $this->width ? intval(round(($this->imageWidth - $this->width) / 2)) - 1 : 0;
-        }
-        if (isset($this->y)) {
-            $y = $this->parseY($this->y);
-        } else {
-            $y = $this->imageHeight > $this->height ? intval(round(($this->imageHeight - $this->height) / 2)) - 1 : 0;
+            $x = 0;
         }
 
-        if ($x + $width > $image->getSize()->getWidth()) {
-            $width -= ($x + $width) - ($image->getSize()->getWidth());
+        if ($x > $imageWidth - 1) {
+            $x = $imageWidth - 1;
+        } elseif ($x < 0) {
+            $x = 0;
         }
-        if ($y + $height > $image->getSize()->getHeight()) {
-            $height -= ($y + $height) - ($image->getSize()->getHeight());
+
+        if (isset($this->y)) {
+            $y = $this->parseY($this->y, $imageHeight);
+        } elseif ($imageHeight > $height) {
+            $y = intval(round(($imageHeight - $height) / 2)) - 1;
+        } else {
+            $y = 0;
+        }
+
+        if ($y > $imageHeight - 1) {
+            $y = $imageHeight - 1;
+        } elseif ($y < 0) {
+            $y = 0;
+        }
+
+        if ($x + $width > $imageWidth) {
+            $width -= $x + $width - $imageWidth;
+        }
+        if ($y + $height > $imageHeight) {
+            $height -= $y + $height - $imageHeight;
         }
         $image->crop(new Point($x, $y), new Box($width, $height));
     }
 
-    /**
-     * @param int|string $expression
-     * @throws \InvalidArgumentException
-     * @return int|bool
-     */
-    private function parseX($expression)
-    {
-        $x = $this->doParseX($expression);
-        if ($x === false) {
-            return false;
-        }
-        if ($x > $this->imageWidth - 1) {
-            return $this->imageWidth - 1;
-        }
-        if ($x < 0) {
-            return 0;
-        }
-        return $x;
-    }
-
-    /**
-     * @param int|string $expression
-     * @throws \InvalidArgumentException
-     * @return int
-     */
-    private function parseY($expression)
-    {
-        $y = $this->doParseY($expression);
-        if ($y === false) {
-            return false;
-        }
-        if ($y > $this->imageHeight - 1) {
-            return $this->imageHeight - 1;
-        }
-        if ($y < 0) {
-            return 0;
-        }
-        return $y;
-    }
-
-    /**
-     * @param mixed $expression
-     * @return bool|int
-     */
-    private function doParseX($expression)
+    private function parseX($expression, $imageWidth)
     {
         if (is_integer($expression) && $expression >= 0) {
             return $expression;
@@ -137,55 +104,27 @@ class Crop extends Object implements TransformationInterface
             return 0;
         }
         if ($expression === 'center') {
-            return intval(round($this->imageWidth / 2)) - 1;
+            return intval(round($imageWidth / 2)) - 1;
         }
         if ($expression === 'right') {
-            return $this->imageWidth - 1;
+            return $imageWidth - 1;
         }
-        if (false !== ($parsed = $this->parseXAsSumExpression($expression))) {
-            return $parsed;
+        if (preg_match('/^left ?\+ ?(\d+)$/', $expression, $matches)) {
+            return intval($matches[1]);
         }
-        if (false !== ($parsed = $this->parseXAsDifferenceExpression($expression))) {
-            return $parsed;
+        if (preg_match('/^center ?\+ ?(\d+)$/', $expression, $matches)) {
+            return intval(round($imageWidth / 2)) - 1 + intval($matches[1]);
         }
-        return false;
-    }
-
-    private function parseXAsSumExpression($expression)
-    {
-        $operatorPosition = strpos($expression, '+');
-        if ($operatorPosition === false) {
-            return false;
+        if (preg_match('/^right ?- ?(\d+)$/', $expression, $matches)) {
+            return $imageWidth - intval($matches[1]) - 1;
         }
-        $leftExpression = trim(substr($expression, 0, $operatorPosition));
-        $rigthExpression = trim(substr($expression, $operatorPosition + 1));
-        if ($leftExpression === 'left' && ctype_digit($rigthExpression)) {
-            return intval($rigthExpression);
-        }
-        if ($leftExpression === 'center' && ctype_digit($rigthExpression)) {
-            return intval(round($this->imageWidth / 2)) - 1 + intval($rigthExpression);
+        if (preg_match('/^center ?- ?(\d+)$/', $expression, $matches)) {
+            return intval(round($imageWidth / 2)) - intval($matches[1]) - 1;
         }
         return false;
     }
 
-    private function parseXAsDifferenceExpression($expression)
-    {
-        $operatorPosition = strpos($expression, '-');
-        if ($operatorPosition === false) {
-            return false;
-        }
-        $leftExpression = trim(substr($expression, 0, $operatorPosition));
-        $rigthExpression = trim(substr($expression, $operatorPosition + 1));
-        if ($leftExpression === 'right' && ctype_digit($rigthExpression)) {
-            return $this->imageWidth - intval($rigthExpression) - 1;
-        }
-        if ($leftExpression === 'center' && ctype_digit($rigthExpression)) {
-            return intval(round($this->imageWidth / 2)) - intval($rigthExpression) - 1;
-        }
-        return false;
-    }
-
-    private function doParseY($expression)
+    private function parseY($expression, $imageHeight)
     {
         if (is_integer($expression) && $expression >= 0) {
             return $expression;
@@ -197,53 +136,25 @@ class Crop extends Object implements TransformationInterface
             return intval($expression);
         }
         if ($expression === 'bottom') {
-            return $this->imageHeight - 1;
+            return $imageHeight - 1;
         }
         if ($expression === 'center') {
-            return intval(round($this->imageHeight / 2) - 1);
+            return intval(round($imageHeight / 2) - 1);
         }
         if ($expression === 'top') {
             return 0;
         }
-        if (false !== ($y = $this->parseYAsSumExpression($expression))) {
-            return $y;
+        if (preg_match('/^top ?\+ ?(\d+)$/', $expression, $matches)) {
+            return intval($matches[1]);
         }
-        if (false !== ($y = $this->parseYAsDifferenceExpression($expression))) {
-            return $y;
+        if (preg_match('/^center ?\+ ?(\d+)$/', $expression, $matches)) {
+            return intval(round($imageHeight / 2)) - 1 + intval($matches[1]);
         }
-        return false;
-    }
-
-    private function parseYAsSumExpression($expression)
-    {
-        $operatorPosition = strpos($expression, '+');
-        if ($operatorPosition === false) {
-            return false;
+        if (preg_match('/^bottom ?- ?(\d+)$/', $expression, $matches)) {
+            return $imageHeight - 1 - intval($matches[1]);
         }
-        $leftExpression = trim(substr($expression, 0, $operatorPosition));
-        $rigthExpression = trim(substr($expression, $operatorPosition + 1));
-        if ($leftExpression === 'top' && ctype_digit($rigthExpression)) {
-            return intval($rigthExpression);
-        }
-        if ($leftExpression === 'center' && ctype_digit($rigthExpression)) {
-            return intval(round($this->imageHeight / 2)) - 1 + intval($rigthExpression);
-        }
-        return false;
-    }
-
-    private function parseYAsDifferenceExpression($expression)
-    {
-        $operatorPosition = strpos($expression, '-');
-        if ($operatorPosition === false) {
-            return false;
-        }
-        $leftExpression = trim(substr($expression, 0, $operatorPosition));
-        $rigthExpression = trim(substr($expression, $operatorPosition + 1));
-        if ($leftExpression === 'bottom' && ctype_digit($rigthExpression)) {
-            return $this->imageHeight - 1 - intval($rigthExpression);
-        }
-        if ($leftExpression === 'center' && ctype_digit($rigthExpression)) {
-            return intval(round($this->imageHeight / 2)) - 1 - intval($rigthExpression);
+        if (preg_match('/^center ?- ?(\d+)$/', $expression, $matches)) {
+            return intval(round($imageHeight / 2)) - 1 - intval($matches[1]);
         }
         return false;
     }
