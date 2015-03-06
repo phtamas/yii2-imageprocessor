@@ -7,12 +7,14 @@ Resizes the image to the specified width and/or height.
 #### Properties
 ##### $width
 The width in pixels to resize to as integer. If null/omitted, image will be resized proportionally to the given height.
+
 ```php
 // Resize proportionally to 300px width
 ['resize', 'width' => 300]
 ```
 ##### $height
 The height in pixels to resize to as integer. If null/omitted, image will be resized proportionally to the given width.
+
 ```php
 // Resize proportionally to 200px height
 ['resize', 'height' => 200]
@@ -108,6 +110,7 @@ Applies a watermark image to the original image. Watermark will be scaled down t
 #### Properties
 ##### $path
 Path to the watermark image file. Can be specified as an alias.
+
 ```php
 // Apply a watermark with default alignment and no margin
 ['watermark', 'path' => '/path/to/watermark.png']
@@ -133,6 +136,7 @@ Rotates an image automatically based on orientation metadata. Requires Exif PHP 
 ## Custom transformations
 
 Implement TransformationInterface 
+
 ```php
 namespace myapp\imageprocessing\transformations;
 
@@ -153,6 +157,7 @@ class CustomTransformation implements TransformationInterface
 }
 ```
 add your class to the configuration
+
 ```php
 'imageTransformer' => [
 	'class' => '\phtamas\yii2\imagetransformer\Component',

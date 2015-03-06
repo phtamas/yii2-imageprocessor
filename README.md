@@ -5,12 +5,14 @@ Ad-hoc processing is also supported but if heavy and complex image manipulation 
 
 ## Getting started
 Install via Composer:
+
 ```json
     "require": {
         "phtamas/yii2-imageprocessor": "0.5.*"
     }
 ```
 Configure it in the 'components' section of your application configuration:
+
 ```php
 'imageProcessor' => [
   'class' => '\phtamas\yii2\imageprocessor\Component',
@@ -50,6 +52,7 @@ Configure it in the 'components' section of your application configuration:
 ],
 ```
 And use it anywhere in your application:
+
 ```php
 // Process uploaded image and save as a JPEG file
 $path = '@image/user/avatar/' . uniqid() . '.jpg';

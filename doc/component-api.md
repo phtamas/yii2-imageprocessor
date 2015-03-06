@@ -3,6 +3,7 @@
 Configurable properties of the Component.
 ### $drivers
 An array of driver names. Valid names: gmagick, imagick, gd. If omitted, the component will try to find the best available driver automatically.
+
 ```php
 // Prefer GD over others
 'drivers' => ['gd', 'gmagick', 'imagick'],
@@ -12,16 +13,19 @@ An array of driver names. Valid names: gmagick, imagick, gd. If omitted, the com
 ```
 ### $jpegQuality
 Integer between 0 and 100. If omitted, Imagine's default will be used. Can be overridden in [image category definitions](#image-category-definition).
+
 ```php
 'jpegQuality' => 95,
 ```
 ### $pngCompression
 Integer between 0 and 9. If omitted, Imagine's default will be used. Can be overridden in [image category definitions](#image-category-definition).
+
 ```php
 'pngCompression' => 7,
 ```
 ### $define
 An array of [image category definitions](#image-category-definition).
+
 ```php
 'define' => [
 
@@ -78,6 +82,7 @@ Or even replace built-in transformation classes with custom ones.
 In a typical web application developers usually want to either process and save an uploaded image or process a stored image and send it to an HTTP client. Main API methods are here to cover these use cases.
 ### save()
 Creates an image instance from the source, processes it with predefined or ad-hoc transformations and saves it as a file.
+
 ```php
 /**
  * @param array|\Imagine\Image\ImageInterface $source
@@ -95,6 +100,7 @@ Destination path or alias as string.
 Name of an [image category definition](#image-category-definition) as string or an [ad-hoc definition](#ad-hoc-definition) as array.
 ### send()
 Creates an image instance from the source, processes it with predefined or ad-hoc transformations and sends it as HTTP output.
+
 ```php
 /**
  * @param array|\Imagine\Image\ImageInterface $source
@@ -113,6 +119,7 @@ A valid [image type](#image-types) as string.
 Name of an [image category definition](#image-category-definition) as string or an [ad-hoc definition](#ad-hoc-definition) as array.
 ### saveAndSend()
 Creates an image instance from the source, processes it with predefined or ad-hoc transformations, saves it as a file and sends it as HTTP output.
+
 ```php
 /**
  * @param array|\Imagine\Image\ImageInterface $source
@@ -135,6 +142,7 @@ Name of an [image category definition](#image-category-definition) as string or 
 These methods were designed mainly for internal use but I made them public to support non-typical use cases.
 ### create()
 Creates an image object instance.
+
 ```php
 /**
  * @param array|\Imagine\Image\ImageInterface $source
@@ -148,6 +156,7 @@ public function create($source)
 A valid [image source](#image-source).
 ### process()
 Creates an image instance from the source and processes it with predefined or ad-hoc transformations.
+
 ```php
 /**
  * @param array|\Imagine\Image\ImageInterface $source
@@ -186,6 +195,7 @@ $image = \Yii::$app->imageProcessor->create(['file' => '/path/to/file']);
 The first parameter of all API methods. Can be one of the following formats.
 #### File
 A filesystem path or alias to an existing image file.
+
 ```php
 // Absolute path
 ['file' => '/path/to/image.jpg']
@@ -199,16 +209,19 @@ $uploadedFile = \yii\web\UploadedFile::getInstanceByName('image');
 ```
 #### Image data (as binary string)
 Useful when e.g. you store images in a database as BLOBs.
+
 ```php
 ['data' => 'data as binary string']
 ```
 #### Image resource
 An already existing image resource. In normal circumstances you don't need to create resources manually. Implemented mainly for completeness and to support extreme use cases.
+
 ```php
 ['resource' => imagecreatefromjpeg('/path/to/image.jpg')]
 ```
 #### Size
 A new, empty image will be created with the specified width and height.
+
 ```php
 ['width' => 400, 'height' => 300]
 ```
@@ -216,6 +229,7 @@ A new, empty image will be created with the specified width and height.
 An object instance that implements \Imagine\Image\ImageInterface.
 ### Image category definition
 A named sub-configuration for a particular group of images where you can both override component's default setting and specify processing steps (transformations) for the group. A category definition can be referred by its name when calling API methods.
+
 ```php
 'productImage' => [
     // Override Component's default
