@@ -28,6 +28,9 @@ class ImageInterfaceSpy implements ImageInterface
     /** @var  null|\Imagine\Image\Metadata\MetadataBag */
     private $metadata;
 
+    /** @var  null|string */
+    private $binaryData;
+
     public function __construct(BoxInterface $size = null)
     {
         $this->size = $size;
@@ -36,7 +39,11 @@ class ImageInterfaceSpy implements ImageInterface
 
     public function get($format, array $options = array())
     {
-
+        if (!isset($this->binaryData)) {
+            throw new Exception('Binary data is not set.');
+        }
+        $this->testSpyRecordMethodCall();
+        return $this->binaryData;
     }
 
 
@@ -186,8 +193,19 @@ class ImageInterfaceSpy implements ImageInterface
 
     }
 
+    /**
+     * @param \Imagine\Image\Metadata\MetadataBag $metadata
+     */
     public function setMetadata(MetadataBag $metadata)
     {
         $this->metadata = $metadata;
+    }
+
+    /**
+     * @param string $binaryData
+     */
+    public function setBinaryData($binaryData)
+    {
+        $this->binaryData = $binaryData;
     }
 }

@@ -1,9 +1,8 @@
 <?php
 namespace phtamas\yii2\imageprocessor\test\unit;
 
-use phtamas\yii2\imageprocessor\test\double\AbstractImagineStub;
-use phtamas\yii2\imageprocessor\test\double\ImageInterfaceStub;
 use Yii;
+use yii\web\Response;
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
 use Imagine\Image\Metadata\MetadataBag;
@@ -12,7 +11,8 @@ use phtamas\yii2\imageprocessor\Component;
 use phtamas\yii2\imageprocessor\test\double\ImageInterfaceDummy;
 use phtamas\yii2\imageprocessor\test\double\AbstractImagineSpy;
 use phtamas\yii2\imageprocessor\test\double\ImageInterfaceSpy;
-use yii\filters\ContentNegotiator;
+use phtamas\yii2\imageprocessor\test\double\AbstractImagineStub;
+use phtamas\yii2\imageprocessor\test\double\ImageInterfaceStub;
 
 class ComponentTest extends PHPUnit_Framework_TestCase
 {
@@ -233,25 +233,30 @@ class ComponentTest extends PHPUnit_Framework_TestCase
     public function testSendWithUndefinedOptions()
     {
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $imageSpy->setBinaryData('12345678');
         $component = new Component();
         $component->send($imageSpy, 'jpg');
         $this->assertEquals(
             [
-                'methodName' => 'show',
+                'methodName' => 'get',
                 'arguments' => ['jpg', []],
             ],
             $imageSpy->testSpyGetMethodCallAtPosition(1)
         );
+        $this->assertEquals(Response::FORMAT_RAW, Yii::$app->response->format);
+        $this->assertEquals('image/jpeg', Yii::$app->response->headers->get('Content-Type'));
+        $this->assertEquals('12345678', Yii::$app->response->content);
     }
 
     public function testSendWithDefaultOptions()
     {
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $imageSpy->setBinaryData('12345678');
         $component = new Component($this->optionsConfiguration);
         $component->send($imageSpy, 'jpg');
         $this->assertEquals(
             [
-                'methodName' => 'show',
+                'methodName' => 'get',
                 'arguments' => ['jpg', $this->imagineOptions],
             ],
             $imageSpy->testSpyGetMethodCallAtPosition(1)
@@ -261,6 +266,7 @@ class ComponentTest extends PHPUnit_Framework_TestCase
     public function testSendWithPredefinedOptionsAndProcessing()
     {
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $imageSpy->setBinaryData('12345678');
         $component = new Component([
             'define' => [
                 'my_definition' => array_merge($this->optionsConfiguration, [
@@ -272,11 +278,8 @@ class ComponentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->processMethodCall, $imageSpy->testSpyGetMethodCallAtPosition(1), 'processing applied');
         $this->assertEquals(
             [
-                'methodName' => 'show',
-                'arguments' => [
-                    'jpg',
-                    $this->imagineOptions,
-                ],
+                'methodName' => 'get',
+                'arguments' => ['jpg', $this->imagineOptions],
             ],
             $imageSpy->testSpyGetMethodCallAtPosition(2),
             'image sent'
@@ -286,6 +289,7 @@ class ComponentTest extends PHPUnit_Framework_TestCase
     public function testSendWithAdHocOptionsAndProcessing()
     {
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $imageSpy->setBinaryData('12345678');
         $component = new Component();
         $component->send($imageSpy, 'jpeg', array_merge($this->optionsConfiguration, [
             'process' => $this->processConfiguration,
@@ -293,11 +297,8 @@ class ComponentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->processMethodCall, $imageSpy->testSpyGetMethodCallAtPosition(1), 'processing applied');
         $this->assertEquals(
             [
-                'methodName' => 'show',
-                'arguments' => [
-                    'jpeg',
-                    $this->imagineOptions,
-                ],
+                'methodName' => 'get',
+                'arguments' => ['jpeg', $this->imagineOptions],
             ],
             $imageSpy->testSpyGetMethodCallAtPosition(2),
             'image sent'
@@ -307,11 +308,12 @@ class ComponentTest extends PHPUnit_Framework_TestCase
     public function testSaveAndSendWithUndefinedOptions()
     {
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $imageSpy->setBinaryData('12345678');
         $component = new Component();
         $component->saveAndSend($imageSpy, '/destination/path', 'jpg');
         $this->assertEquals(
             [
-                'methodName' => 'show',
+                'methodName' => 'get',
                 'arguments' => ['jpg', []],
             ],
             $imageSpy->testSpyGetMethodCallAtPosition(1),
@@ -330,11 +332,12 @@ class ComponentTest extends PHPUnit_Framework_TestCase
     public function testSaveAndSendWithDefaultOptions()
     {
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $imageSpy->setBinaryData('12345678');
         $component = new Component($this->optionsConfiguration);
         $component->saveAndSend($imageSpy, '/destination/path', 'jpg');
         $this->assertEquals(
             [
-                'methodName' => 'show',
+                'methodName' => 'get',
                 'arguments' => ['jpg', $this->imagineOptions],
             ],
             $imageSpy->testSpyGetMethodCallAtPosition(1),
@@ -353,6 +356,7 @@ class ComponentTest extends PHPUnit_Framework_TestCase
     public function testSaveAndSendWithPredefinedOptionsAndProcessing()
     {
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $imageSpy->setBinaryData('12345678');
         $component = new Component([
             'define' => [
                 'my_definition' => array_merge($this->optionsConfiguration, [
@@ -364,7 +368,7 @@ class ComponentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->processMethodCall, $imageSpy->testSpyGetMethodCallAtPosition(1), 'processing applied');
         $this->assertEquals(
             [
-                'methodName' => 'show',
+                'methodName' => 'get',
                 'arguments' => [
                     'jpg',
                     $this->imagineOptions,
@@ -390,6 +394,7 @@ class ComponentTest extends PHPUnit_Framework_TestCase
     public function testSaveAndSendWithAdHocOptionsAndProcessing()
     {
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $imageSpy->setBinaryData('12345678');
         $component = new Component();
         $component->saveAndSend($imageSpy, '/destination/path' , 'jpg', array_merge($this->optionsConfiguration, [
             'process' => $this->processConfiguration,
@@ -397,7 +402,7 @@ class ComponentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($this->processMethodCall, $imageSpy->testSpyGetMethodCallAtPosition(1), 'processing applied');
         $this->assertEquals(
             [
-                'methodName' => 'show',
+                'methodName' => 'get',
                 'arguments' => [
                     'jpg',
                     $this->imagineOptions,
@@ -424,6 +429,7 @@ class ComponentTest extends PHPUnit_Framework_TestCase
     {
         Yii::setAlias('images', '/path/to/images');
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $imageSpy->setBinaryData('12345678');
         $component = new Component();
         $component->saveAndSend($imageSpy, '@images/image.jpg');
         $this->assertEquals(
@@ -438,11 +444,12 @@ class ComponentTest extends PHPUnit_Framework_TestCase
     public function testSaveAndSendWithImplicitType()
     {
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
+        $imageSpy->setBinaryData('12345678');
         $component = new Component();
         $component->saveAndSend($imageSpy, '/destination/directory/image.jpg');
         $this->assertEquals(
             [
-                'methodName' => 'show',
+                'methodName' => 'get',
                 'arguments' => ['jpg', []],
             ],
             $imageSpy->testSpyGetMethodCallAtPosition(1)

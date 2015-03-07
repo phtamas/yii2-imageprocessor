@@ -3,10 +3,11 @@ namespace phtamas\yii2\imageprocessor;
 
 use Yii;
 use yii\base\Component as BaseComponent;
+use yii\web\Response;
+use yii\base\NotSupportedException;
 use Imagine\Gmagick\Imagine as ImagineGmagick;
 use Imagine\Imagick\Imagine as ImagineImagick;
 use Imagine\Gd\Imagine as ImagineGd;
-use yii\base\NotSupportedException;
 use Imagine\Image\AbstractImagine;
 use Imagine\Image\ImageInterface;
 use Imagine\Image\Box;
@@ -63,6 +64,15 @@ class Component extends BaseComponent
         'crop' => '\phtamas\yii2\imageprocessor\transformation\Crop',
         'resize' => '\phtamas\yii2\imageprocessor\transformation\Resize',
         'watermark' => '\phtamas\yii2\imageprocessor\transformation\Watermark',
+    ];
+
+    private $supportedTypes = [
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'gif'  => 'image/gif',
+        'png'  => 'image/png',
+        'wbmp' => 'image/vnd.wap.wbmp',
+        'xbm'  => 'image/xbm',
     ];
 
     public function __call($name, $params)
@@ -166,7 +176,7 @@ class Component extends BaseComponent
         $processAs = isset($definition['process']) ? $definition['process'] : null;
         $image = $this->process($source, $processAs);
         $options = $this->mergeOptions($definition);
-        $image->show($type, $options);
+        $this->sendImage($image, $type, $options);
     }
 
     /**
@@ -188,7 +198,7 @@ class Component extends BaseComponent
         if (!isset($type)) {
             $type = pathinfo($path, PATHINFO_EXTENSION);
         }
-        $image->show($type, $options);
+        $this->sendImage($image, $type, $options);
         $image->save(Yii::getAlias($path), $options);
     }
 
@@ -286,5 +296,12 @@ class Component extends BaseComponent
             return $definition;
         }
         throw new InvalidArgumentException();
+    }
+
+    private function sendImage(ImageInterface $image, $type, $options)
+    {
+        Yii::$app->response->format = Response::FORMAT_RAW;
+        Yii::$app->response->headers->add('Content-Type', $this->supportedTypes[$type]);
+        Yii::$app->response->content = $image->get($type, $options);
     }
 }
