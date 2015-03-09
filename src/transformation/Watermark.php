@@ -22,9 +22,9 @@ class Watermark extends Object implements TransformationInterface
     public $path;
 
     /**
-     * @var int|int[]|null
+     * @var int
      */
-    public $margin;
+    public $margin = 0;
 
     /**
      * @var string How to align watermark on the image
@@ -39,63 +39,6 @@ class Watermark extends Object implements TransformationInterface
      */
     public $align = 'bottom-left';
 
-    /** @var  int */
-    private $imageWidth;
-
-    /** @var  int */
-    private $imageHeight;
-
-    /** @var  int */
-    private $watermarkImageWidth;
-
-    /** @var  int */
-    private $watermarkImageHeight;
-
-    public function getStartXLeft()
-    {
-        return (int) $this->margin;
-    }
-    public function getStartXCenter()
-    {
-        $x = intval(round(($this->imageWidth - $this->watermarkImageWidth) / 2)) - 1;
-        if ($x < $this->margin) {
-            $x = $this->margin;
-        }
-        return $x;
-    }
-
-    public function getStartXRight()
-    {
-        $x = $this->imageWidth - $this->watermarkImageWidth - 1 - (int)$this->margin;
-        if ($x < $this->margin) {
-            $x = $this->margin;
-        }
-        return $x;
-    }
-
-    public function getStarYTop()
-    {
-        return (int)$this->margin;
-    }
-
-    public function getStartYCenter()
-    {
-        $y = intval(round(($this->imageHeight - $this->watermarkImageHeight) / 2)) - 1;
-        if ($y < $this->margin) {
-            $y = $this->margin;
-        }
-        return $y;
-    }
-
-    public function getStartYBottom()
-    {
-        $y = $this->imageHeight - $this->watermarkImageHeight - 1 - (int)$this->margin;
-        if ($y < $this->margin) {
-            $y = $this->margin;
-        }
-        return $y;
-    }
-
     public function transform(ImageInterface $image, ImagineInterface $imagine)
     {
         if (!isset($this->path)) {
@@ -104,14 +47,14 @@ class Watermark extends Object implements TransformationInterface
                 self::className()
             ));
         }
-        $this->imageWidth = $image->getSize()->getWidth();
-        $this->imageHeight = $image->getSize()->getHeight();
+        $imageWidth = $image->getSize()->getWidth();
+        $imageHeight = $image->getSize()->getHeight();
 
-        $watermarkImageMaxWidth = $this->imageWidth - (2 * $this->margin);
+        $watermarkImageMaxWidth = $imageWidth - (2 * $this->margin);
         if ($watermarkImageMaxWidth < 1) {
             return;
         }
-        $watermarkImageMaxHeight = $this->imageHeight - (2 * $this->margin);
+        $watermarkImageMaxHeight = $imageHeight - (2 * $this->margin);
         if ($watermarkImageMaxHeight < 1) {
             return;
         }
@@ -126,30 +69,37 @@ class Watermark extends Object implements TransformationInterface
             $resize->transform($watermarkImage, $imagine);
         }
 
-        $this->watermarkImageWidth = $watermarkImage->getSize()->getWidth();
-        $this->watermarkImageHeight = $watermarkImage->getSize()->getHeight();
+        $watermarkImageWidth = $watermarkImage->getSize()->getWidth();
+        $watermarkImageHeight = $watermarkImage->getSize()->getHeight();
 
         switch ($this->align) {
             case 'top-left':
-                $start = new Point($this->getStartXLeft(), $this->getStarYTop());
+                $x = $this->margin;
+                $y = $this->margin;
                 break;
             case 'top-center':
-                $start = new Point($this->getStartXCenter(), $this->getStarYTop());
+                $x = $this->calculateStartXCenter($imageWidth, $watermarkImageWidth);
+                $y = $this->margin;
                 break;
             case 'top-right':
-                $start = new Point($this->getStartXRight(), $this->getStarYTop());
+                $x = $this->calculateStartXRight($imageWidth, $watermarkImageWidth);
+                $y = $this->margin;
                 break;
             case 'bottom-left':
-                $start = new Point($this->getStartXLeft(), $this->getStartYBottom());
+                $x = $this->margin;
+                $y = $this->calculateStartYBottom($imageHeight, $watermarkImageHeight);
                 break;
             case 'bottom-center':
-                $start = new Point($this->getStartXCenter(), $this->getStartYBottom());
+                $x = $this->calculateStartXCenter($imageWidth, $watermarkImageWidth);
+                $y = $this->calculateStartYBottom($imageHeight, $watermarkImageHeight);
                 break;
             case 'bottom-right':
-                $start = new Point($this->getStartXRight(), $this->getStartYBottom());
+                $x = $this->calculateStartXRight($imageWidth, $watermarkImageWidth);
+                $y = $this->calculateStartYBottom($imageHeight, $watermarkImageHeight);
                 break;
             case 'center':
-                $start = new Point($this->getStartXCenter(), $this->getStartYCenter());
+                $x = $this->calculateStartXCenter($imageWidth, $watermarkImageWidth);
+                $y = $this->calculateStartYCenter($imageHeight, $watermarkImageHeight);
                 break;
             default:
                 throw new InvalidConfigException(sprintf(
@@ -158,6 +108,33 @@ class Watermark extends Object implements TransformationInterface
                 ));
         }
 
-        $image->paste($watermarkImage, $start);
+        if ($x < $this->margin) {
+            $x = $this->margin;
+        }
+
+        if ($y < $this->margin) {
+            $y = $this->margin;
+        }
+        $image->paste($watermarkImage, new Point($x, $y));
+    }
+
+    private function calculateStartXCenter($imageWidth, $watermarkImageWidth)
+    {
+        return intval(round(($imageWidth - $watermarkImageWidth) / 2)) - 1;
+    }
+
+    private function calculateStartXRight($imageWidth, $watermarkImageWidth)
+    {
+        return $imageWidth - $watermarkImageWidth - 1 - $this->margin;
+    }
+
+    private function calculateStartYCenter($imageHeight, $watermarkImageHeight)
+    {
+        return intval(round(($imageHeight - $watermarkImageHeight) / 2)) - 1;
+    }
+
+    private function calculateStartYBottom($imageHeight, $watermarkImageHeight)
+    {
+        return $imageHeight - $watermarkImageHeight - 1 - $this->margin;
     }
 }
