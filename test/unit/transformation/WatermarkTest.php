@@ -27,8 +27,8 @@ class WatermarkTest extends PHPUnit_Framework_TestCase
         $watermarkImageStub->setSize(new Box(100, 50));
         $imagineStub->setImage($watermarkImageStub);
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
-        $watermark = new Watermark(['path' => '/path/to/watermark/image']);
-
+        $watermark = new Watermark();
+        $watermark->path = '/path/to/watermark/image';
         $watermark->align = 'top-left';
         $watermark->transform($imageSpy, $imagineStub);
         $this->assertSame(
@@ -162,7 +162,8 @@ class WatermarkTest extends PHPUnit_Framework_TestCase
         $watermarkImageStub->setSize(new Box(100, 50));
         $imagineStub->setImage($watermarkImageStub);
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
-        $watermark = new Watermark(['path' => '/path/to/watermark/image']);
+        $watermark = new Watermark();
+        $watermark->path = '/path/to/watermark/image';
         $watermark->margin = 10;
 
         $watermark->align = 'top-left';
@@ -204,7 +205,8 @@ class WatermarkTest extends PHPUnit_Framework_TestCase
         $imagineStub->setImage($watermarkImageSpy);
         $imageStub = new ImageInterfaceStub();
         $imageStub->setSize(new Box(100, 50));
-        $watermark = new Watermark(['path' => '/path/to/watermark/image']);
+        $watermark = new Watermark();
+        $watermark->path = '/path/to/watermark/image';
         $watermark->margin = 10;
 
         $watermark->align = 'top-left';
@@ -265,7 +267,8 @@ class WatermarkTest extends PHPUnit_Framework_TestCase
         $watermarkImageStub->setSize(new Box(200, 100));
         $imagineStub->setImage($watermarkImageStub);
         $imageSpy = new ImageInterfaceSpy(new Box(100, 80));
-        $watermark = new Watermark(['path' => '/path/to/watermark/image']);
+        $watermark = new Watermark();
+        $watermark->path = '/path/to/watermark/image';
         $watermark->margin = 10;
 
         $watermark->align = 'top-left';

@@ -1,7 +1,6 @@
 <?php
 namespace phtamas\yii2\imageprocessor\transformation;
 
-use yii\base\Object;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\ImageInterface;
 use phtamas\yii2\imageprocessor\TransformationInterface;
@@ -11,7 +10,7 @@ use phtamas\yii2\imageprocessor\TransformationInterface;
  * Requires Exif PHP extension to be installed and enabled otherwise transformation will fail silently
  * and image will be kept untouched.
  */
-class Autorotate extends Object implements TransformationInterface
+class Autorotate implements TransformationInterface
 {
     public function transform(ImageInterface $image, ImagineInterface $imagine)
     {

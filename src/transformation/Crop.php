@@ -1,7 +1,6 @@
 <?php
 namespace phtamas\yii2\imageprocessor\transformation;
 
-use yii\base\Object;
 use Imagine\Image\ImageInterface;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\Point;
@@ -11,7 +10,7 @@ use phtamas\yii2\imageprocessor\TransformationInterface;
 /**
  * Crops the image to the specified width and height
  */
-class Crop extends Object implements TransformationInterface
+class Crop implements TransformationInterface
 {
     /**
      * @var int|string Horizontal coordinate of the top-left corner of the area to crop, in pixels.
