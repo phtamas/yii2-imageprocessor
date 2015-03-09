@@ -7,7 +7,6 @@ use Imagine\Image\ImagineInterface;
 use Imagine\Image\ImageInterface;
 use Imagine\Image\Point;
 use phtamas\yii2\imageprocessor\TransformationInterface;
-use phtamas\yii2\imageprocessor\transformation\Resize;
 
 /**
  * Applies a watermark image to the original image.
