@@ -351,11 +351,13 @@ class ResizeTest extends PHPUnit_Framework_TestCase
 
     public function testResizeWithInvalidFilter()
     {
+        $imageStub = new ImageInterfaceStub();
+        $imageStub->setSize(new Box(300, 200));
         $resize = new Resize();
         $resize->width = 150;
         $resize->height = 100;
         $resize->filter = 'invalid filter';
         $this->setExpectedException('\yii\base\InvalidConfigException');
-        $resize->transform(new ImageInterfaceStub(), new ImagineInterfaceDummy());
+        $resize->transform($imageStub, new ImagineInterfaceDummy());
     }
 } 

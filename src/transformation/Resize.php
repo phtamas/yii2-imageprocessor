@@ -111,26 +111,27 @@ class Resize extends Object implements TransformationInterface
             ));
         }
 
+        $originalSize = $image->getSize();
         if (is_null($this->width)) {
-            $size = $image->getSize()->heighten($this->height);
+            $newSize = $originalSize->heighten($this->height);
         } elseif (is_null($this->height)) {
-            $size = $image->getSize()->widen($this->width);
+            $newSize = $originalSize->widen($this->width);
         } else {
-            $size = new Box($this->width, $this->height);
+            $newSize = new Box($this->width, $this->height);
             if ($this->scaleTo === 'fit') {
-                $size = $this->scaleToFit($size, $image);
+                $newSize = $this->scaleToFit($newSize, $originalSize);
             } elseif ($this->scaleTo === 'cover') {
-                $size = $this->scaleToCover($size, $image);
+                $newSize = $this->scaleToCover($newSize, $originalSize);
             }
         }
-        if ($this->only === 'up' && $image->getSize()->contains($size)) {
+        if ($this->only === 'up' && $originalSize->contains($newSize)) {
             return;
         }
-        if ($this->only === 'down' && $size->contains($image->getSize())) {
+        if ($this->only === 'down' && $newSize->contains($originalSize)) {
             return;
         }
         if (is_null($this->filter) || $image instanceof GdImage) {
-            $image->resize($size);
+            $image->resize($newSize);
         } elseif (!array_key_exists($this->filter, $this->filters)) {
             throw new InvalidConfigException(sprintf(
                 'Invalid filter type: %s. Valid types: %s.',
@@ -139,36 +140,36 @@ class Resize extends Object implements TransformationInterface
             ));
         }
         else {
-            $image->resize($size, $this->filters[$this->filter]);
+            $image->resize($newSize, $this->filters[$this->filter]);
         }
 
     }
 
     /**
-     * @param BoxInterface $size
-     * @param ImageInterface $image
+     * @param BoxInterface $newSize
+     * @param BoxInterface $originalSize
      * @return BoxInterface
      */
-    private function scaleToFit(BoxInterface $size, ImageInterface $image)
+    private function scaleToFit(BoxInterface $newSize, BoxInterface $originalSize)
     {
-        if ($image->getSize()->getWidth() / $image->getSize()->getHeight() > $size->getWidth() / $size->getHeight()) {
-            return $image->getSize()->widen($size->getWidth());
+        if ($originalSize->getWidth() / $originalSize->getHeight() > $newSize->getWidth() / $newSize->getHeight()) {
+            return $originalSize->widen($newSize->getWidth());
         } else {
-            return $image->getSize()->heighten($size->getHeight());
+            return $originalSize->heighten($newSize->getHeight());
         }
     }
 
     /**
-     * @param BoxInterface $size
-     * @param ImageInterface $image
+     * @param BoxInterface $newSize
+     * @param BoxInterface $originalSize
      * @return BoxInterface
      */
-    private function scaleToCover(BoxInterface $size, ImageInterface $image)
+    private function scaleToCover(BoxInterface $newSize, BoxInterface $originalSize)
     {
-        if ($image->getSize()->getWidth() / $image->getSize()->getHeight() > $size->getWidth() / $size->getHeight()) {
-            return $image->getSize()->heighten($size->getHeight());
+        if ($originalSize->getWidth() / $originalSize->getHeight() > $newSize->getWidth() / $newSize->getHeight()) {
+            return $originalSize->heighten($newSize->getHeight());
         } else {
-            return $image->getSize()->widen($size->getWidth());
+            return $originalSize->widen($newSize->getWidth());
         }
     }
 }
