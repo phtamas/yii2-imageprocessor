@@ -50,11 +50,11 @@ class Watermark implements TransformationInterface
 
         $watermarkImageMaxWidth = $imageWidth - (2 * $this->margin);
         if ($watermarkImageMaxWidth < 1) {
-            return;
+            return $image;
         }
         $watermarkImageMaxHeight = $imageHeight - (2 * $this->margin);
         if ($watermarkImageMaxHeight < 1) {
-            return;
+            return $image;
         }
 
         $watermarkImage = $imagine->open(\Yii::getAlias($this->path));
@@ -114,6 +114,7 @@ class Watermark implements TransformationInterface
             $y = $this->margin;
         }
         $image->paste($watermarkImage, new Point($x, $y));
+        return $image;
     }
 
     private function calculateStartXCenter($imageWidth, $watermarkImageWidth)

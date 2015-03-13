@@ -12,8 +12,11 @@ class TransformationStub implements TransformationInterface
 
     public $height;
 
+    public $transformReturnValue;
+
     public function transform(ImageInterface $image, ImagineInterface $imagine)
     {
         $image->resize(new Box($this->width, $this->height));
+        return $this->transformReturnValue;
     }
 }

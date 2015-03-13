@@ -15,10 +15,10 @@ use Imagine\Image\Metadata\ExifMetadataReader;
 use InvalidArgumentException;
 
 /**
- * @method autorotate(ImageInterface $image)
- * @method crop(ImageInterface $image, array $configuration)
- * @method resize(ImageInterface $image, array $configuration)
- * @method watermark(ImageInterface $image, array $configuration)
+ * @method ImageInterface autorotate(ImageInterface $image)
+ * @method ImageInterface crop(ImageInterface $image, array $configuration)
+ * @method ImageInterface resize(ImageInterface $image, array $configuration)
+ * @method ImageInterface watermark(ImageInterface $image, array $configuration)
  */
 class Component extends BaseComponent
 {
@@ -103,14 +103,14 @@ class Component extends BaseComponent
         if ($source instanceof ImageInterface) {
             return $source;
         }
-        if (isset($source['file'])) {
-            return $this->imagine->open($source['file']);
+        if (is_string($source)) {
+            return $this->imagine->open(Yii::getAlias($source));
+        }
+        if (is_resource($source)) {
+            return $this->imagine->read($source);
         }
         if (isset($source['data'])) {
             return $this->imagine->load($source['data']);
-        }
-        if (isset($source['resource'])) {
-            return $this->imagine->read($source['resource']);
         }
         if (isset($source['width']) && isset($source['height'])) {
             return $this->imagine->create(new Box($source['width'], $source['height']));
@@ -141,7 +141,7 @@ class Component extends BaseComponent
         if (is_array($as)) {
             foreach ($as as $transformationDefinition) {
                 $transformation = $this->createTransformation(array_shift($transformationDefinition), $transformationDefinition);
-                $transformation->transform($image, $this->imagine);
+                $image = $transformation->transform($image, $this->imagine);
             }
         }
         return $image;

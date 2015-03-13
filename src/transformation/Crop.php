@@ -86,6 +86,7 @@ class Crop implements TransformationInterface
             $height -= $y + $height - $imageHeight;
         }
         $image->crop(new Point($x, $y), new Box($width, $height));
+        return $image;
     }
 
     private function parseX($expression, $imageWidth)

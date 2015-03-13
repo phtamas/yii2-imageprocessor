@@ -56,13 +56,13 @@ And use it anywhere in your application:
 ```php
 // Process uploaded image and save as a JPEG file
 $path = '@image/user/avatar/' . uniqid() . '.jpg';
-Yii::$app->imageProcessor->save(['file' => $uploadedFile->tempName], $path, 'userAvatar');
+Yii::$app->imageProcessor->save($uploadedFile->tempName, $path, 'userAvatar');
 
 // Process image (stored as BLOB in the DB) and send it to the HTTP client
 Yii::$app->imageProcessor->send(['data' => 'binary string'], 'jpg', 'galleryImage');
 
 // Ad-hoc processing is possible, too
-Yii::$app->imageProcessor->saveAndSend(['file' => '@images/image.jpg'], $path, 'jpg', [
+Yii::$app->imageProcessor->saveAndSend('@images/image.jpg', $path, 'jpg', [
     'process' => [['resize', 'width' => 300]], // Resize proportionally to 300 px width
 ]);
 

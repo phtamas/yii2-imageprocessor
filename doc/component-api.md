@@ -177,7 +177,7 @@ The name of the method is the name of the transformation, the first parameter is
 configuration array (can be omitted when the transformation doesn't require configuration).
 
 ```php
-$image = \Yii::$app->imageProcessor->create(['file' => '/path/to/file']);
+$image = \Yii::$app->imageProcessor->create('/path/to/file');
 
 // Without configuration
 \Yii::$app->imageProcessor->autorotate($image);
@@ -198,31 +198,32 @@ A filesystem path or alias to an existing image file.
 
 ```php
 // Absolute path
-['file' => '/path/to/image.jpg']
+\Yii::$app->imageProcessor->create('/path/to/image.jpg');
 
 // Alias
-['file' => '@images/image.jpg']
+\Yii::$app->imageProcessor->create('@images/image.jpg');
 
 // Uploaded file
 $uploadedFile = \yii\web\UploadedFile::getInstanceByName('image');
-['file' => $uploadedFile->tempName]
+\Yii::$app->imageProcessor->create($uploadedFile->tempName);
 ```
 #### Image data (as binary string)
 Useful when e.g. you store images in a database as BLOBs.
 
 ```php
-['data' => 'data as binary string']
+\Yii::$app->imageProcessor->create(['data' => 'data as binary string']);
 ```
 #### Stream resource
 
 ```php
-['resource' => fopen('/path/to/image.jpg', 'r')]
+$resource = fopen('/path/to/image.jpg', 'r');
+\Yii::$app->imageProcessor->create($resource);
 ```
 #### Size
 A new, empty image will be created with the specified width and height.
 
 ```php
-['width' => 400, 'height' => 300]
+\Yii::$app->imageProcessor->create(['width' => 400, 'height' => 300]);
 ```
 #### Object
 An object instance that implements \Imagine\Image\ImageInterface.

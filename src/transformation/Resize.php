@@ -141,7 +141,7 @@ class Resize implements TransformationInterface
         else {
             $image->resize($newSize, $this->filters[$this->filter]);
         }
-
+        return $image;
     }
 
     /**

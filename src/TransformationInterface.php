@@ -11,6 +11,9 @@ interface TransformationInterface
      *
      * @param \Imagine\Image\ImageInterface $image
      * @param \Imagine\Image\ImagineInterface $imagine
+     * @return ImageInterface The transformed image
+     * Some transformations cannot be applied to the original instance and to make the API consistent it's required to
+     * return the transformed image even in cases when it's the same image instance as the original.
      */
     public function transform(ImageInterface $image, ImagineInterface $imagine);
 } 

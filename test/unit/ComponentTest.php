@@ -44,10 +44,23 @@ class ComponentTest extends PHPUnit_Framework_TestCase
         $imageMock = new ImageInterfaceDummy();
         $imagineSpy = new AbstractImagineSpy($imageMock);
         $component = new Component(['imagine' => $imagineSpy]);
-        $image = $component->create(['file' => '/path/to/file']);
+        $image = $component->create('/path/to/file');
         $this->assertEquals(1, $imagineSpy->testSpyGetMethodCallCount('open'));
         $this->assertEquals([['/path/to/file']], $imagineSpy->testSpyGetMethodCallArguments('open'));
         $this->assertSame($imageMock, $image);
+    }
+
+    public function testCreateFromAlias()
+    {
+        $imageMock = new ImageInterfaceDummy();
+        $imagineSpy = new AbstractImagineSpy($imageMock);
+        $component = new Component(['imagine' => $imagineSpy]);
+        Yii::setAlias('alias', '/path/to/file');
+        $image = $component->create('@alias');
+        $this->assertEquals(1, $imagineSpy->testSpyGetMethodCallCount('open'));
+        $this->assertEquals([['/path/to/file']], $imagineSpy->testSpyGetMethodCallArguments('open'));
+        $this->assertSame($imageMock, $image);
+        Yii::setAlias('alias', null);
     }
 
     public function testCreateFromBinaryData()
@@ -66,10 +79,12 @@ class ComponentTest extends PHPUnit_Framework_TestCase
         $imageMock = new ImageInterfaceDummy();
         $imagineSpy = new AbstractImagineSpy($imageMock);
         $component = new Component(['imagine' => $imagineSpy]);
-        $image = $component->create(['resource' => 'resource']);
+        $resource = fopen('php://stdin', 'r');
+        $image = $component->create($resource);
         $this->assertEquals(1, $imagineSpy->testSpyGetMethodCallCount('read'));
-        $this->assertEquals([['resource']], $imagineSpy->testSpyGetMethodCallArguments('read'));
+        $this->assertEquals([[$resource]], $imagineSpy->testSpyGetMethodCallArguments('read'));
         $this->assertSame($imageMock, $image);
+        fclose($resource);
     }
 
     public function testCreateFromSize()
@@ -139,6 +154,23 @@ class ComponentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, $imageSpy->testSpyGetMethodCallCount('resize'));
         $this->assertEquals($this->processMethodCall, $imageSpy->testSpyGetMethodCallAtPosition(1));
 
+    }
+
+    public function testProcessWithTransformationThatCreatesNewImageInstance()
+    {
+        $originalImageDummy = new ImageInterfaceDummy();
+        $newImageDummy = new ImageInterfaceDummy();
+        $component = new Component([
+            'transformations' => [
+                'stub' => [
+                    'class' => '\phtamas\yii2\imageprocessor\test\double\TransformationStub',
+                    'transformReturnValue' => $newImageDummy,
+                    'width' => 150,
+                    'height' => 100,
+                ],
+            ],
+        ]);
+        $this->assertSame($newImageDummy, $component->process($originalImageDummy, [['stub']]));
     }
 
     public function testSaveWithUndefinedOptions()
@@ -557,7 +589,7 @@ class ComponentTest extends PHPUnit_Framework_TestCase
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
         $imageSpy->setMetadata(new MetadataBag(['ifd0.Orientation' => 3]));
         $component = new Component();
-        $component->autorotate($imageSpy);
+        $this->assertInstanceOf('\Imagine\Image\ImageInterface', $component->autorotate($imageSpy));
         $this->assertEquals(
             [
                 'methodName' => 'rotate',
@@ -571,12 +603,12 @@ class ComponentTest extends PHPUnit_Framework_TestCase
     {
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
         $component = new Component();
-        $component->crop($imageSpy, [
+        $this->assertInstanceOf('\Imagine\Image\ImageInterface', $component->crop($imageSpy, [
             'x' => 10,
             'y' => 10,
             'width' => 100,
             'height' => 50,
-        ]);
+        ]));
         $this->assertEquals(
             [
                 'methodName' => 'crop',
@@ -595,10 +627,10 @@ class ComponentTest extends PHPUnit_Framework_TestCase
     {
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
         $component = new Component();
-        $component->resize($imageSpy, [
+        $this->assertInstanceOf('\Imagine\Image\ImageInterface', $component->resize($imageSpy, [
             'width' => 100,
             'height' => 50,
-        ]);
+        ]));
         $this->assertEquals(
             [
                 'methodName' => 'resize',
@@ -620,10 +652,10 @@ class ComponentTest extends PHPUnit_Framework_TestCase
         $imagineStub->setImage($watermarkImageStub);
         $imageSpy = new ImageInterfaceSpy(new Box(300, 200));
         $component = new Component(['imagine' => $imagineStub]);
-        $component->watermark($imageSpy, [
+        $this->assertInstanceOf('\Imagine\Image\ImageInterface', $component->watermark($imageSpy, [
             'path' => '/path/to/watermark/image',
             'align' => 'top-left',
-        ]);
+        ]));
         $this->assertSame(
             [
                 'methodName' => 'paste',

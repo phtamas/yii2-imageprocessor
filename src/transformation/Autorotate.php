@@ -18,7 +18,7 @@ class Autorotate implements TransformationInterface
         // without bothering with the color.
         $metadata = $image->metadata();
         if (!isset($metadata['ifd0.Orientation'])) {
-            return;
+            return $image;
         }
         $orientation = $metadata['ifd0.Orientation'];
         if ($orientation == 3) {
@@ -28,5 +28,6 @@ class Autorotate implements TransformationInterface
         } elseif ($orientation == 8) {
             $image->rotate(-90);
         }
+        return $image;
     }
 }
