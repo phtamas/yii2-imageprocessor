@@ -8,7 +8,7 @@ Install via Composer:
 
 ```json
     "require": {
-        "phtamas/yii2-imageprocessor": "0.5.*"
+        "phtamas/yii2-imageprocessor": "0.6.*"
     }
 ```
 Configure it in the 'components' section of your application configuration:
