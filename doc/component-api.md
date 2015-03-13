@@ -213,11 +213,10 @@ Useful when e.g. you store images in a database as BLOBs.
 ```php
 ['data' => 'data as binary string']
 ```
-#### Image resource
-An already existing image resource. In normal circumstances you don't need to create resources manually. Implemented mainly for completeness and to support extreme use cases.
+#### Stream resource
 
 ```php
-['resource' => imagecreatefromjpeg('/path/to/image.jpg')]
+['resource' => fopen('/path/to/image.jpg', 'r')]
 ```
 #### Size
 A new, empty image will be created with the specified width and height.
