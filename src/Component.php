@@ -302,6 +302,6 @@ class Component extends BaseComponent
     {
         Yii::$app->response->format = Response::FORMAT_RAW;
         Yii::$app->response->headers->add('Content-Type', $this->supportedTypes[$type]);
-        Yii::$app->response->content = $image->get($type, $options);
+        Yii::$app->response->data = $image->get($type, $options);
     }
 }

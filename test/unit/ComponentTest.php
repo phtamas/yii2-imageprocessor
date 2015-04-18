@@ -277,7 +277,7 @@ class ComponentTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals(Response::FORMAT_RAW, Yii::$app->response->format);
         $this->assertEquals('image/jpeg', Yii::$app->response->headers->get('Content-Type'));
-        $this->assertEquals('12345678', Yii::$app->response->content);
+        $this->assertEquals('12345678', Yii::$app->response->data);
     }
 
     public function testSendWithDefaultOptions()
