@@ -19,6 +19,10 @@
         {
             "name": "Papp-Horváth Tamás",
             "email": "phtamas@gmail.com"
+        },
+        {
+            "name": "Alexandr Ivanov",
+            "email": "t3mnikov@yandex.ru"
         }
     ],
     "minimum-stability": "stable",
