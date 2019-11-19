@@ -1,5 +1,5 @@
 {
-    "name": "phtamas/yii2-imageprocessor",
+    "name": "khikmatullaev/yii2-imageprocessor",
     "description": "Configurable image processing for Yii2",
     "keywords": [
         "yii2",
@@ -24,12 +24,12 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "phtamas\\yii2\\imageprocessor\\": "src/"
+            "khikmatullaev\\yii2\\imageprocessor\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "phtamas\\yii2\\imageprocessor\\test\\": "test/"
+            "khikmatullaev\\yii2\\imageprocessor\\test\\": "test/"
         }
     }
 }

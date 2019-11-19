@@ -2,7 +2,7 @@
 namespace phtamas\yii2\imageprocessor\transformation;
 
 use Imagine\Image\Box;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\base\InvalidConfigException;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\ImageInterface;
@@ -14,7 +14,7 @@ use phtamas\yii2\imageprocessor\transformation\Resize;
  * Applies a watermark image to the original image.
  * Watermark will be scaled down to fit image (with the specified margins) when necessary.
  */
-class Watermark extends Object implements TransformationInterface
+class Watermark extends BaseObject implements TransformationInterface
 {
     /**
      * @var string Path to the watermark image file. Can be specified as an alias.
