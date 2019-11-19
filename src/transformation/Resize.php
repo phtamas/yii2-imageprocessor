@@ -2,7 +2,7 @@
 namespace phtamas\yii2\imageprocessor\transformation;
 
 use Yii;
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\base\InvalidConfigException;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\ImageInterface;
@@ -13,7 +13,7 @@ use phtamas\yii2\imageprocessor\TransformationInterface;
 /**
  * Resizes an image.
  */
-class Resize extends Object implements TransformationInterface
+class Resize extends BaseObject implements TransformationInterface
 {
     /**
      * @var  int|null The width in pixels to resize to. If null/omitted, image will be resized proportionally
