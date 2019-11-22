@@ -10,7 +10,7 @@
     "license": "MIT",
     "require": {
         "yiisoft/yii2": "~2.0",
-        "imagine/imagine": "0.6.*"
+        "imagine/imagine": "0.7.*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.*"
@@ -19,6 +19,10 @@
         {
             "name": "Papp-Horváth Tamás",
             "email": "phtamas@gmail.com"
+        },
+        {
+            "name": "Alexandr Ivanov",
+            "email": "t3mnikov@yandex.ru"
         }
     ],
     "minimum-stability": "stable",
